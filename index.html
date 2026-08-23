@@ -17,6 +17,7 @@
     --c-common:#5b8cff;
     --c-t1:#f2b84b;
     --c-t2:#7ee0c3;
+    --c-t3:#e08fe0;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
@@ -55,6 +56,7 @@
   }
   .card.t1{border-left-color:var(--c-t1);}
   .card.t2{border-left-color:var(--c-t2);}
+  .card.t3{border-left-color:var(--c-t3);}
   .card-head{
     display:flex;align-items:center;justify-content:space-between;padding:13px 14px;gap:10px;
   }
@@ -65,6 +67,7 @@
   }
   .card.t1 .card-head .tag{background:rgba(242,184,75,.15);color:var(--c-t1);}
   .card.t2 .card-head .tag{background:rgba(126,224,195,.15);color:var(--c-t2);}
+  .card.t3 .card-head .tag{background:rgba(224,143,224,.15);color:var(--c-t3);}
   .card-head .keyword{font-size:14.5px;font-weight:700;line-height:1.4;}
   .chev{font-size:18px;color:var(--sub);transition:transform .2s;flex:0 0 auto;}
   .card.open .chev{transform:rotate(180deg);}
@@ -113,9 +116,11 @@ const DATA = [
   {cat:"課題認識", tag:"共通", tclass:"", kw:"コロナ×働き方改革×同行減", body:"コロナ禍で面談形態が多様化、医師の働き方改革で面談時間が減少、同行機会減で若手育成機能が低下。"},
   {cat:"課題認識", tag:"共通", tclass:"", kw:"二重入力×属人化×格差", body:"レガシーSFAで入力に時間・二重入力が発生、活動が属人化しデータ未活用。同状況の顧客でも「1回で採用 vs 半年かかる」という成果格差が生じていた。"},
   {cat:"課題認識", tag:"営業DX用", tclass:"t2", kw:"自社サイトの分離管理", body:"自社Webサイトの閲覧データがMR活動と分離管理され、医師のデジタル接点（Web講演会参加など）を活かせていない。"},
+  {cat:"課題認識", tag:"人材育成用", tclass:"t3", kw:"早期成果差×離職リスク", body:"同行機会減でスキル向上できず、早期に成果を出せるMRと出せないMRの差が拡大。若手の立ち上がり遅れが離職・早期戦力化不足にもつながりかねない。"},
 
   {cat:"IT戦略の結び", tag:"生産性向上用", tclass:"t1", kw:"データ基盤＝DXの第一歩", body:"営業データを全社的に活用できるデータ基盤の整備が、中期経営計画に掲げるDX推進の第一歩であると位置づけた。"},
   {cat:"IT戦略の結び", tag:"営業DX用", tclass:"t2", kw:"オンオフ接点の統合", body:"オンライン・オフラインを問わない医師との接点情報を一元的に管理し、報告業務も簡素化する新たなSFAの構築に取り組むこととした。"},
+  {cat:"IT戦略の結び", tag:"人材育成用", tclass:"t3", kw:"暗黙知の形式知化×組織資産化", body:"ベテランMRの知見や活動記録を組織の共有資産として蓄積・活用し、経験の浅いMRの育成に活かせる仕組みづくりに、事業戦略部門主導で取り組むこととした。"},
 
   {cat:"提案内容", tag:"共通", tclass:"", kw:"コスト×他社実績×連携性", body:"選定基準はコスト、他社での導入実績、既存の顧客管理システムとの連携性の3点。SaaS型SFAを選定。"},
   {cat:"提案内容", tag:"共通", tclass:"", kw:"音声入力×AI分析×一画面表示", body:"音声での面談記録、紹介資材の自動登録、AIによる自動分類・ネクストアクション提案。面談記録・自社サイト閲覧・Web講演会参加状況を一画面表示（営業DX版で強調）。"},
@@ -127,6 +132,7 @@ const DATA = [
 
   {cat:"評価", tag:"共通", tclass:"", kw:"1時間→30分（50%減）", body:"報告入力にかかる時間が平均1時間から30分へ半減（定量評価）。"},
   {cat:"評価", tag:"共通", tclass:"", kw:"若手が模倣×現場の声", body:"若手MRがAIのネクストアクション提案でベテランの活動パターンを参照し、新規採用の好事例が増加。複数支店から準備時間短縮の声（定性評価）。"},
+  {cat:"評価", tag:"人材育成用", tclass:"t3", kw:"空いた時間→指導時間の副次効果", body:"記録業務効率化でベテランMRに時間的余裕が生まれ、その時間を新人MRへの直接指導にあてられるようになった。狙っていなかった副次的成果で、課題認識（人材育成）と直結する強いポイント。"},
 
   {cat:"今後の課題", tag:"共通", tclass:"", kw:"データ分析・AI活用×研究開発連携", body:"蓄積データの分析・AI活用は道半ば。経営層の意見を受け、研究開発部門と連携し発表論文・治験情報もSFA上で一元化していきたい。"},
 ];
