@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>論文モジュール</title>
+<style>
+  :root{
+    --bg:#0b0f18;
+    --panel:#161c2b;
+    --panel2:#1c2337;
+    --text:#eef1f8;
+    --sub:#9aa4bd;
+    --line:#2a3247;
+    --c-common:#5b8cff;
+    --c-t1:#f2b84b;
+    --c-t2:#7ee0c3;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  header{
+    position:sticky;top:0;z-index:10;
+    background:rgba(11,15,24,.92);backdrop-filter:blur(10px);
+    padding:calc(env(safe-area-inset-top) + 12px) 14px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{font-size:17px;margin:0 0 10px;font-weight:700;}
+  .search{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:14px;
+  }
+  .search::placeholder{color:var(--sub);}
+  .tabs{
+    display:flex;gap:6px;overflow-x:auto;padding:10px 14px 12px;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);white-space:nowrap;
+  }
+  .tab.active{background:var(--c-common);color:#0b0f18;border-color:var(--c-common);}
+
+  main{padding:12px 14px 40px;}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;
+    border-left:4px solid var(--c-common);
+  }
+  .card.t1{border-left-color:var(--c-t1);}
+  .card.t2{border-left-color:var(--c-t2);}
+  .card-head{
+    display:flex;align-items:center;justify-content:space-between;padding:13px 14px;gap:10px;
+  }
+  .card-head .titlebox{flex:1;min-width:0;}
+  .card-head .tag{
+    display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;
+    background:rgba(91,140,255,.15);color:var(--c-common);margin-bottom:4px;
+  }
+  .card.t1 .card-head .tag{background:rgba(242,184,75,.15);color:var(--c-t1);}
+  .card.t2 .card-head .tag{background:rgba(126,224,195,.15);color:var(--c-t2);}
+  .card-head .keyword{font-size:14.5px;font-weight:700;line-height:1.4;}
+  .chev{font-size:18px;color:var(--sub);transition:transform .2s;flex:0 0 auto;}
+  .card.open .chev{transform:rotate(180deg);}
+  .card-body{
+    max-height:0;overflow:hidden;transition:max-height .25s ease;
+  }
+  .card.open .card-body{max-height:300px;}
+  .card-body .inner{padding:0 14px 14px;font-size:13.5px;color:var(--sub);line-height:1.7;}
+
+  .section-label{
+    font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.05em;text-transform:uppercase;
+    margin:20px 2px 8px;
+  }
+  .section-label:first-child{margin-top:4px;}
+
+  .combo{
+    background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:8px;
+  }
+  .combo h3{font-size:14px;margin:0 0 8px;}
+  .combo ol{margin:0;padding-left:18px;font-size:13px;color:var(--text);line-height:1.85;}
+  .combo .note{color:var(--sub);font-size:12px;margin-top:10px;line-height:1.6;}
+
+  .hint{
+    text-align:center;color:var(--sub);font-size:11px;padding:8px 20px 0;line-height:1.6;
+  }
+  .empty{text-align:center;color:var(--sub);font-size:13px;padding:40px 20px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📘 論文モジュール：SFA刷新</h1>
+  <input class="search" id="search" placeholder="キーワードで検索…" oninput="render()">
+  <div class="tabs" id="tabs"></div>
+</header>
+
+<main id="main"></main>
+
+<p class="hint">共有アイコン → 「ホーム画面に追加」でアプリのように使えます</p>
+
+<script>
+const DATA = [
+  {cat:"事業特性・経営戦略", tag:"共通", tclass:"", kw:"中堅・希少疾患・MR信頼", body:"中堅の製薬メーカー、希少疾患薬。MRへの高い信頼が新規採用・売上拡大に直結する事業構造。"},
+  {cat:"事業特性・経営戦略", tag:"共通", tclass:"", kw:"中計：DX×若手育成", body:"中期経営計画の重点方針は「DXによる営業活動の効率化・高度化」「若手社員の育成強化」の2本柱。私は事業戦略部門の一員としてこれを現場で具体化する立場だった。"},
+
+  {cat:"課題認識", tag:"共通", tclass:"", kw:"コロナ×働き方改革×同行減", body:"コロナ禍で面談形態が多様化、医師の働き方改革で面談時間が減少、同行機会減で若手育成機能が低下。"},
+  {cat:"課題認識", tag:"共通", tclass:"", kw:"二重入力×属人化×格差", body:"レガシーSFAで入力に時間・二重入力が発生、活動が属人化しデータ未活用。同状況の顧客でも「1回で採用 vs 半年かかる」という成果格差が生じていた。"},
+  {cat:"課題認識", tag:"営業DX用", tclass:"t2", kw:"自社サイトの分離管理", body:"自社Webサイトの閲覧データがMR活動と分離管理され、医師のデジタル接点（Web講演会参加など）を活かせていない。"},
+
+  {cat:"IT戦略の結び", tag:"生産性向上用", tclass:"t1", kw:"データ基盤＝DXの第一歩", body:"営業データを全社的に活用できるデータ基盤の整備が、中期経営計画に掲げるDX推進の第一歩であると位置づけた。"},
+  {cat:"IT戦略の結び", tag:"営業DX用", tclass:"t2", kw:"オンオフ接点の統合", body:"オンライン・オフラインを問わない医師との接点情報を一元的に管理し、報告業務も簡素化する新たなSFAの構築に取り組むこととした。"},
+
+  {cat:"提案内容", tag:"共通", tclass:"", kw:"コスト×他社実績×連携性", body:"選定基準はコスト、他社での導入実績、既存の顧客管理システムとの連携性の3点。SaaS型SFAを選定。"},
+  {cat:"提案内容", tag:"共通", tclass:"", kw:"音声入力×AI分析×一画面表示", body:"音声での面談記録、紹介資材の自動登録、AIによる自動分類・ネクストアクション提案。面談記録・自社サイト閲覧・Web講演会参加状況を一画面表示（営業DX版で強調）。"},
+
+  {cat:"工夫した点", tag:"共通", tclass:"", kw:"PoC×支店別説明会", body:"ベテランMRの反発を見込み、全社一斉導入ではなく小規模PoCで先に効果と課題を検証。支店ごとに導入説明会も実施。"},
+  {cat:"工夫した点", tag:"共通", tclass:"", kw:"経営層向け・定量検証計画", body:"経営層の費用対効果への懸念を見込み、PoC段階で入力時間削減効果を定量測定し、その結果を踏まえて本格導入を判断する計画とした。"},
+
+  {cat:"実施内容", tag:"共通", tclass:"", kw:"10名→30名の2段階", body:"PoCは10名程度→30名程度に拡大する2段階で実施。反発が予想されたベテランMRもあえて組み込みインタビュー、意見をマニュアル作成に反映。"},
+
+  {cat:"評価", tag:"共通", tclass:"", kw:"1時間→30分（50%減）", body:"報告入力にかかる時間が平均1時間から30分へ半減（定量評価）。"},
+  {cat:"評価", tag:"共通", tclass:"", kw:"若手が模倣×現場の声", body:"若手MRがAIのネクストアクション提案でベテランの活動パターンを参照し、新規採用の好事例が増加。複数支店から準備時間短縮の声（定性評価）。"},
+
+  {cat:"今後の課題", tag:"共通", tclass:"", kw:"データ分析・AI活用×研究開発連携", body:"蓄積データの分析・AI活用は道半ば。経営層の意見を受け、研究開発部門と連携し発表論文・治験情報もSFA上で一元化していきたい。"},
+];
+
+const CATS = ["すべて", ...Array.from(new Set(DATA.map(d=>d.cat)))];
+let activeCat = "すべて";
+
+function renderTabs(){
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = CATS.map(c =>
+    `<div class="tab ${c===activeCat?'active':''}" onclick="setCat('${c}')">${c}</div>`
+  ).join("") + `<div class="tab ${activeCat==='組み立て手順'?'active':''}" onclick="setCat('組み立て手順')">組み立て手順</div>`;
+}
+
+function setCat(c){ activeCat = c; render(); }
+
+function render(){
+  renderTabs();
+  const main = document.getElementById("main");
+  const q = document.getElementById("search").value.trim().toLowerCase();
+
+  if(activeCat === "組み立て手順"){
+    main.innerHTML = `
+      <div class="combo">
+        <h3>本番での組み立て手順</h3>
+        <ol>
+          <li>出題テーマを見て、「課題認識」「IT戦略の結び」のどのブロックを使うか決める</li>
+          <li>設問アは「事業特性・経営戦略 → 課題認識 → IT戦略の結び」の順で組む</li>
+          <li>設問イは「課題認識の続き → 提案内容 → 工夫した点」の順で組む</li>
+          <li>設問ウは「実施内容 → 評価 → 今後の課題」の順で組む</li>
+          <li>各ブロックの文言は丸暗記せず、出題文の言葉遣いに合わせて言い換える</li>
+        </ol>
+        <p class="note">ブロック同士の「橋渡しの一文」（前のブロックを受けて、次のブロックにつなげる一文）を忘れないこと。これが論文の一貫性を作る一番のポイント。</p>
+      </div>`;
+    return;
+  }
+
+  let items = DATA;
+  if(activeCat !== "すべて") items = items.filter(d => d.cat === activeCat);
+  if(q) items = items.filter(d => (d.kw+d.body+d.cat).toLowerCase().includes(q));
+
+  if(items.length === 0){
+    main.innerHTML = `<div class="empty">該当するモジュールが見つかりません</div>`;
+    return;
+  }
+
+  let html = "";
+  let lastCat = null;
+  items.forEach((d, i) => {
+    if(activeCat === "すべて" && d.cat !== lastCat){
+      html += `<div class="section-label">${d.cat}</div>`;
+      lastCat = d.cat;
+    }
+    html += `
+      <div class="card ${d.tclass}" id="card-${i}">
+        <div class="card-head" onclick="toggle(${i})">
+          <div class="titlebox">
+            <span class="tag">${d.tag}</span>
+            <div class="keyword">${d.kw}</div>
+          </div>
+          <div class="chev">⌄</div>
+        </div>
+        <div class="card-body"><div class="inner">${d.body}</div></div>
+      </div>`;
+  });
+  main.innerHTML = html;
+  window.__items = items;
+}
+
+function toggle(i){
+  document.getElementById("card-"+i).classList.toggle("open");
+}
+
+render();
+</script>
+</body>
+</html>
