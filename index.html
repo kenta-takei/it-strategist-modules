@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <title>論文モジュール</title>
 <style>
   :root{
@@ -94,9 +95,39 @@
     text-align:center;color:var(--sub);font-size:11px;padding:8px 20px 0;line-height:1.6;
   }
   .empty{text-align:center;color:var(--sub);font-size:13px;padding:40px 20px;}
+
+  #gate{
+    position:fixed;inset:0;z-index:999;background:var(--bg);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;
+  }
+  #gate.hidden{display:none;}
+  #gate .box{width:100%;max-width:320px;text-align:center;}
+  #gate h2{font-size:16px;margin:0 0 16px;}
+  #gate input{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:15px;text-align:center;
+  }
+  #gate button{
+    width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;
+    background:var(--c-common);color:#0b0f18;font-weight:700;font-size:14px;
+  }
+  #gate .err{color:#ff8080;font-size:12px;margin-top:8px;min-height:1em;}
+  #content{display:none;}
+  #content.visible{display:block;}
 </style>
 </head>
 <body>
+
+<div id="gate">
+  <div class="box">
+    <h2>🔒 パスワードを入力してください</h2>
+    <input type="password" id="pw" placeholder="パスワード" autofocus>
+    <button onclick="tryUnlock()">開く</button>
+    <div class="err" id="pwErr"></div>
+  </div>
+</div>
+
+<div id="content">
 
 <header>
   <h1>📘 論文モジュール：SFA刷新</h1>
@@ -206,7 +237,39 @@ function toggle(i){
   document.getElementById("card-"+i).classList.toggle("open");
 }
 
-render();
+const PW_HASH = "d7258571fe628d609005ee5313ba9bc9061c6fb74c69a118bff0ed71978d62f1";
+const PW_STORE_KEY = "it-strategist-modules-unlocked";
+
+async function sha256Hex(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function unlockUI(){
+  document.getElementById("gate").classList.add("hidden");
+  document.getElementById("content").classList.add("visible");
+  render();
+}
+
+async function tryUnlock(){
+  const val = document.getElementById("pw").value;
+  const hash = await sha256Hex(val);
+  if(hash === PW_HASH){
+    localStorage.setItem(PW_STORE_KEY, "1");
+    unlockUI();
+  } else {
+    document.getElementById("pwErr").textContent = "パスワードが違います";
+  }
+}
+
+document.getElementById("pw").addEventListener("keydown", (e) => {
+  if(e.key === "Enter") tryUnlock();
+});
+
+if(localStorage.getItem(PW_STORE_KEY) === "1"){
+  unlockUI();
+}
 </script>
+</div>
 </body>
 </html>
